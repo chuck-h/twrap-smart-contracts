@@ -3,13 +3,13 @@ A bridge to wrap Telos EVM tokens to Telos native
 ## Operating sequence example
 * User1e, a tEVM user, acquires MUSD, a USD stablecoin on tEVM, for fiat
 * User1e wraps the MUSD into a bridgeable equivalent WMUSD using a standard ERC20 wrap contract
-* User1e submits a "deposit-to" transfer action to the bridge contract, specifying User2n (a native account) as recipient
-* User2n receives the native wrapped token TMUSD into their account
-* User2n buys something from a merchant and pays witl TMUSD. The merchant receives TMUSD into account User3n
-* User3n submits a "redeem-to" action to the Native bridge contract with metadata specifying the recipient EVM account. In this case it is their own account, User3e.
-* The bridge contract sends WMUSD to User3e, 1:1 with the TMUSD transfer in.
-* User3e unwraps the WMUSD to MUSD
-* User3e exchanges MUSD for fiat via Meridian
+* User1e submits a "deposit-to" transfer action to the bridge contract, specifying User1n (a native account owned by the same individual) as recipient.
+* User1n receives the native wrapped token TMUSD into their account
+* User1n buys something from a merchant and pays witl TMUSD. The merchant receives TMUSD into account User2n
+* User2n submits a "redeem-to" action to the Native bridge contract with metadata specifying the recipient EVM account. In this case it is an EVM account they also own, User2e.
+* The bridge contract sends WMUSD to User2e, 1:1 with the TMUSD transfer in.
+* User2e unwraps the WMUSD to MUSD
+* User2e exchanges MUSD for fiat via Meridian
 * 
 # Outline
 ## Solidity-side bridge contract
