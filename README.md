@@ -1,5 +1,7 @@
 # twrap-smart-contracts
 A bridge to wrap Telos EVM tokens to Telos native
+
+Because we need a Telos Native stablecoin.
 ## Operating sequence example
 * User1e, a tEVM user, acquires MUSD, a USD stablecoin on tEVM, for fiat
 * User1e wraps the MUSD into a bridgeable equivalent WMUSD using a standard ERC20 wrap contract
