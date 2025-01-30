@@ -26,6 +26,8 @@ This can use a standard OpenZeppelin wrap contract to convert from a recognized 
 
 # References
 ## Jesse on Telos Dev Chat
+https://t.me/HelloTelos/649436/685622
+
 It’s the other direction that’s missing
 The best option until the message bridge is available is to queue some request/message on the solidity/EVM side and have an off chain oracle notify the native side that it’s there
 Then the native side can read the storage of the solidity/EVM contract and fulfill the request or consume the message
