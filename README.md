@@ -7,7 +7,7 @@ Because we need a Telos Native stablecoin.
 * User1e wraps the MUSD into a bridgeable equivalent WMUSD using a standard ERC20 wrap contract
 * User1e submits a "deposit-to" transfer action to the bridge contract, specifying User1n (a native account owned by the same individual) as recipient.
 * User1n receives the native wrapped token TMUSD into their account
-* User1n buys something from a merchant and pays witl TMUSD. The merchant receives TMUSD into account User2n
+* User1n buys something from a merchant and pays with TMUSD. The merchant receives TMUSD into account User2n
 * User2n submits a "redeem-to" action to the Native bridge contract with metadata specifying the recipient EVM account. In this case it is an EVM account they also own, User2e.
 * The bridge contract sends WMUSD to User2e, 1:1 with the TMUSD transfer in.
 * User2e unwraps the WMUSD to MUSD
@@ -48,3 +48,8 @@ https://github.com/stephenhodgkiss/erc20-with-onchain-data/tree/main
 
 Maybe not applicable?
 https://ethereum.stackexchange.com/questions/138779/is-there-a-way-to-attach-a-memo-to-an-erc-20-approve-transaction
+
+## Token transfer guidelines
+You probably know all this but I don't
+
+https://mixbytes.io/blog/defi-patterns-erc20-token-transfers-howto
