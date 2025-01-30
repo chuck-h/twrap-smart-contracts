@@ -43,3 +43,7 @@ https://github.com/telosnetwork/native-to-evm-transaction
 ## OpenZeppelin Wrap contract
 https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Wrapper.sol
 
+## Add metadata to EVM transaction
+Maybe not applicable?
+
+https://ethereum.stackexchange.com/questions/138779/is-there-a-way-to-attach-a-memo-to-an-erc-20-approve-transaction
