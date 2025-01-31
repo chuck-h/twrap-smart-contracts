@@ -4,21 +4,22 @@ A bridge to wrap Telos EVM tokens to Telos native
 Because we need a Telos Native stablecoin.
 ## Operating sequence example
 * User1e, a tEVM user, acquires MUSD, a USD stablecoin on tEVM, for fiat
-* User1e wraps the MUSD into a bridgeable equivalent WMUSD using a standard ERC20 wrap contract
-* User1e submits a "deposit-to" transfer action to the bridge contract, specifying User1n (a native account owned by the same individual) as recipient.
-* User1n receives the native wrapped token TMUSD into their account
+* User1e wraps the MUSD into a bridgeable equivalent WMUSD, which is an ERC20 wrap contract with an extra call function for bridging.
+* User1e submits an EVM "bridge-to" call to the WMUSD contract, specifying User1n (a native account owned by the same individual) as recipient.
+* User1n receives the bridged Telos native token TMUSD, just minted by the contract, into their account
 * User1n buys something from a merchant and pays with TMUSD. The merchant receives TMUSD into account User2n
-* User2n submits a "redeem-to" action to the Native bridge contract with metadata specifying the recipient EVM account. In this case it is an EVM account they also own, User2e.
-* The bridge contract sends WMUSD to User2e, 1:1 with the TMUSD transfer in.
+* User2n transfers TMUSD to the Native bridge contract with the recipient EVM account specified in the memo. In this case the recipient is an EVM account they also own, User2e.
+* The bridge contract sends WMUSD to User2e, 1:1 with the TMUSD transfer in, and burns the TMUSD
 * User2e unwraps the WMUSD to MUSD
 * User2e exchanges MUSD for fiat via Meridian
 * 
 # Outline
 ## Solidity-side bridge contract
-Write a Solidity contract which accepts ERC20 "deposit-to" transfers containing metadata for recipient Telos native account. Executing such a transfer deposits the ERC20 into a vault and places the transaction in a queue. The contract also has an action to send tokens out from the vault.
+This Solidity contract provides ERC20 "depositFor" and "WithdrawTo" functions to wrap and unwrap the underlying token (e.g. MUSD). It supports the conventional ERC20 "transfer", "transferFrom" and "approve" functions so that the wrapped tokens can be exchanged as any ERC20 token. In addition, this contract provides  "bridge" and "bridgeFrom" calls which place tx data (including a recipient address on the Telos native chain) in a pending queue. In the case of success, the recipient will get native tokens in 1:1 ratio to the EVM wrapped tokens bridged in, and those EVM tokens will be burned. 
 
 ## Native-side bridge contract
-Write a Telos native contract which reads the queue and mints wrapped tokens at 1:1 to deposited ERC20's and delivers them to the recipient account. The contract also has a "redeem-to" action which burns the wrapped tokens and generates an EVM transaction to deliver original tokens to from the vault to the recipient.
+This Telos native contract reads the queue and mints native tokens at 1:1 to bridged ERC20's for delivery to the recipient account. If successful, it generates an EVM call to the Solidity-side contract which burns EVM tokens and erases the pending-queue data.
+When native tokens are transferred into this contract,  action which burns the wrapped tokens and generates an EVM transaction to deliver original tokens to from the vault to the recipient.
 
 ## Solidity-side wrap contract (e.g. for EVM stablecoin)
 This can use a standard OpenZeppelin wrap contract to convert from a recognized stablecoin (e.g. Meridian MUSD) to a wrapped version which is an extended ERC20 able to participate in the Solidity-side bridge contract (i.e. has the "deposit-to" action).
