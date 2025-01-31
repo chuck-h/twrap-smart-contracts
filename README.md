@@ -3,20 +3,20 @@ A bridge to wrap Telos EVM tokens to Telos native
 
 Because we need a Telos Native stablecoin.
 ## Operating sequence example
-* User1e, a tEVM user, acquires MUSD, a USD stablecoin on tEVM, via DEX or for fiat
-* User1e wraps the MUSD into a bridgeable equivalent WMUSD, which is an ERC20 wrap contract with an extra call function for bridging.
-* User1e submits an EVM "bridge" call to the WMUSD contract, specifying User1n (a native account owned by the same individual) as recipient.
-* User1n receives the bridged Telos native token TMUSD, just minted by the contract, into their account
-* User1n buys something from a merchant and pays with TMUSD. The merchant receives TMUSD into account User2n
-* User2n transfers TMUSD to the Native bridge contract with the recipient EVM account specified in the memo. In this case the recipient is an EVM account they also own, User2e.
-* The bridge contract sends WMUSD to User2e, 1:1 with the TMUSD transfer in, and burns the TMUSD
-* User2e unwraps the WMUSD to MUSD
-* User2e exchanges MUSD for fiat via Meridian
+* User1e, a tEVM user, acquires USDM, a USD stablecoin on tEVM, via DEX or for fiat
+* User1e wraps the MUSD into a bridgeable equivalent WUSDM, which is an ERC20 wrap contract with additional call functions supporting bridging.
+* User1e submits an EVM "bridge" call to the WUSDM contract, specifying User1n (a native account owned by the same individual) as recipient.
+* User1n receives the bridged Telos native token TUSDM, just minted by the contract, into their account
+* User1n buys something from a merchant and pays with TUSDM. The merchant receives TUSDM into account User2n
+* User2n transfers TUSDM to the Native bridge contract with the recipient EVM account specified in the memo. In this case the recipient is an EVM account they also own, User2e.
+* The bridge contract sends WUSDM to User2e, 1:1 with the TUSDM transfer in, and burns the TUSDM
+* User2e unwraps the WUSDM to USDM
+* User2e exchanges USDM for fiat via Meridian
 * 
 # Outline
 ## Solidity-side bridge contract
 ### Wrapped ERC20 functionality
-This Solidity contract provides ERC20 "depositFor" and "WithdrawTo" functions to wrap and unwrap the underlying token (e.g. MUSD). It supports the conventional ERC20 "transfer", "transferFrom" and "approve" functions so that the wrapped tokens can be exchanged as any ERC20 token.
+This Solidity contract provides ERC20 "depositFor" and "WithdrawTo" functions to wrap and unwrap the underlying token (e.g. USDM). It supports the conventional ERC20 "transfer", "transferFrom" and "approve" functions so that the wrapped tokens can be exchanged as any ERC20 token.
 ### EVM-to-Native bridge transfer
 In addition, this contract provides  "bridge" and "bridgeFrom" calls which place tx data (including a recipient address on the Telos native chain) in a pending queue. The matched native bridge contract responds to the queue data. When the native side completes, it calls a "cleanup" function on the Solidity contract.
 ### Native-to-EVM bridge transfer
