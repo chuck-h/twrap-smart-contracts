@@ -1,5 +1,5 @@
 # twrap-smart-contracts
-A bridge to wrap Telos EVM tokens to Telos native
+A bridge to wrap Telos EVM tokens to Telos native. This is a matched pair of contracts, one in Solidity and one on Telos native.
 
 Because we need a Telos Native stablecoin.
 ## Operating sequence example
