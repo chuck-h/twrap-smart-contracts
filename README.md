@@ -3,9 +3,9 @@ A bridge to wrap Telos EVM tokens to Telos native
 
 Because we need a Telos Native stablecoin.
 ## Operating sequence example
-* User1e, a tEVM user, acquires MUSD, a USD stablecoin on tEVM, for fiat
+* User1e, a tEVM user, acquires MUSD, a USD stablecoin on tEVM, via DEX or for fiat
 * User1e wraps the MUSD into a bridgeable equivalent WMUSD, which is an ERC20 wrap contract with an extra call function for bridging.
-* User1e submits an EVM "bridge-to" call to the WMUSD contract, specifying User1n (a native account owned by the same individual) as recipient.
+* User1e submits an EVM "bridge" call to the WMUSD contract, specifying User1n (a native account owned by the same individual) as recipient.
 * User1n receives the bridged Telos native token TMUSD, just minted by the contract, into their account
 * User1n buys something from a merchant and pays with TMUSD. The merchant receives TMUSD into account User2n
 * User2n transfers TMUSD to the Native bridge contract with the recipient EVM account specified in the memo. In this case the recipient is an EVM account they also own, User2e.
@@ -15,16 +15,17 @@ Because we need a Telos Native stablecoin.
 * 
 # Outline
 ## Solidity-side bridge contract
-This Solidity contract provides ERC20 "depositFor" and "WithdrawTo" functions to wrap and unwrap the underlying token (e.g. MUSD). It supports the conventional ERC20 "transfer", "transferFrom" and "approve" functions so that the wrapped tokens can be exchanged as any ERC20 token. In addition, this contract provides  "bridge" and "bridgeFrom" calls which place tx data (including a recipient address on the Telos native chain) in a pending queue. In the case of success, the recipient will get native tokens in 1:1 ratio to the EVM wrapped tokens bridged in, and those EVM tokens will be burned. 
-
+### Wrapped ERC20 functionality
+This Solidity contract provides ERC20 "depositFor" and "WithdrawTo" functions to wrap and unwrap the underlying token (e.g. MUSD). It supports the conventional ERC20 "transfer", "transferFrom" and "approve" functions so that the wrapped tokens can be exchanged as any ERC20 token.
+### EVM-to-Native bridge transfer
+In addition, this contract provides  "bridge" and "bridgeFrom" calls which place tx data (including a recipient address on the Telos native chain) in a pending queue. The matched native bridge contract responds to the queue data. When the native side completes, it calls a "cleanup" function on the Solidity contract.
+### Native-to-EVM bridge transfer
+The native bridge contract calls an "issue" function on the Solidity contract, minting and delivering tokens to the recipient.
 ## Native-side bridge contract
-This Telos native contract reads the queue and mints native tokens at 1:1 to bridged ERC20's for delivery to the recipient account. If successful, it generates an EVM call to the Solidity-side contract which burns EVM tokens and erases the pending-queue data.
-When native tokens are transferred into this contract,  action which burns the wrapped tokens and generates an EVM transaction to deliver original tokens to from the vault to the recipient.
-
-## Solidity-side wrap contract (e.g. for EVM stablecoin)
-This can use a standard OpenZeppelin wrap contract to convert from a recognized stablecoin (e.g. Meridian MUSD) to a wrapped version which is an extended ERC20 able to participate in the Solidity-side bridge contract (i.e. has the "deposit-to" action).
-
-
+### EVM-to-Native bridge transfer
+This Telos native contract, when triggered, reads the queue and mints native tokens at 1:1 to bridged ERC20's for delivery to the recipient account. If successful, it generates an "cleanup" call to the Solidity-side contract which burns the EVM tokens and erases the pending-queue data.
+### Native-to-EVM bridge transfer
+When native tokens are transferred into this contract, the memo data is validated and the contract calls an "issue" function on the Solidity bridge contract. If successful, the native contract burns the submitted tokens.
 # References
 ## Jesse on Telos Dev Chat
 https://t.me/HelloTelos/649436/685622
@@ -50,7 +51,5 @@ https://github.com/stephenhodgkiss/erc20-with-onchain-data/tree/main
 Maybe not applicable?
 https://ethereum.stackexchange.com/questions/138779/is-there-a-way-to-attach-a-memo-to-an-erc-20-approve-transaction
 
-## Token transfer guidelines
-You probably know all this but I don't
-
+## ERC20 Token transfer guidelines
 https://mixbytes.io/blog/defi-patterns-erc20-token-transfers-howto
